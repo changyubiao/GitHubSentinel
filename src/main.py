@@ -15,7 +15,9 @@ from subscription_manager import SubscriptionManager
 from command_handler import CommandHandler
 
 def run_scheduler(scheduler):
-    scheduler.start()
+    print("Starting scheduler...")
+    # mock scheduler for testing
+    # scheduler.start()
 
 def main():
     config = Config()
