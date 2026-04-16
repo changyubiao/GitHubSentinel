@@ -22,14 +22,24 @@ class ReportGenerator:
                 file.write(f"- {pr}\n")
         return file_path
 
-    def generate_daily_report(self, markdown_file_path):
+    def generate_daily_report(self, markdown_file_path,output_file_path=None):
         with open(markdown_file_path, 'r') as file:
             markdown_content = file.read()
 
         report = self.llm.generate_daily_report(markdown_content)
 
-        report_file_path = os.path.splitext(markdown_file_path)[0] + "_report.md"
+        if output_file_path:
+            report_file_path = output_file_path
+        else:
+            report_file_path = os.path.splitext(markdown_file_path)[0] + "_report.md"
+        # report_file_path = os.path.splitext(markdown_file_path)[0] + "_report.md"
         with open(report_file_path, 'w+') as report_file:
             report_file.write(report)
 
         print(f"Generated report saved to {report_file_path}")
+
+if __name__ == '__main__':
+    pass
+    # llm = LLM()
+    # generator = ReportGenerator(llm)
+    # generator.generate_daily_report("daily_progress/langchain-ai_langchain_2026-04-16.md")

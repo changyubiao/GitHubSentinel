@@ -162,6 +162,8 @@ cython_debug/
 #.idea/
 
 # User-defined
-daily_progress/*
+daily_progress/
  
 local_*.json
+
+.idea/
