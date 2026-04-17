@@ -15,6 +15,10 @@ api_yi_key = os.getenv("API_YI_KEY")
 api_yi_base_url = os.getenv("API_YI_BASE_URL")
 
 
+ark_api_key = os.getenv("ARK_API_KEY")
+ark_base_url = os.getenv("ARK_API_BASE_URL")
+
+
 
 class ModelFactory:
     _instance = None
@@ -46,7 +50,11 @@ class ModelFactory:
             "apiyi": {
                 "api_key": api_yi_key,
                 "base_url": api_yi_base_url,
-            },
+                },
+            "ark":{
+                "api_key": ark_api_key,
+                "base_url": ark_base_url,
+            }
         }
 
     def get_model(self, factory_name="apiyi"):
@@ -81,10 +89,11 @@ class ModelFactory:
 
 
 class LLM:
-    def __init__(self, facotry_name="apiyi", model_name: str = 'gpt-3.5-turbo'):
+    def __init__(self, factory_name="apiyi", model_name: str = 'gpt-3.5-turbo'):
         self.model_factory = ModelFactory()
-        self.client = self.model_factory.get_model(facotry_name)
+        self.client = self.model_factory.get_model(factory_name)
         self.model_name = model_name
+        self.factory_name = factory_name
 
         self.system_prompt = """
         你是一名资深技术文档工程师和项目信息汇总专家。
@@ -109,6 +118,11 @@ class LLM:
 
             {markdown_content}
         """)
+
+
+
+    def __repr__(self):
+        return f"LLM(model_name={self.model_name},factory_name={self.factory_name})"
 
     def generate_daily_report(self, markdown_content, dry_run=False):
         # prompt = f"以下是项目的最新进展，根据功能合并同类项，形成一份简报，至少包含：1）新增功能；2）主要改进；3）修复问题；:\n\n{markdown_content}"

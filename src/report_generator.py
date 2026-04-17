@@ -43,3 +43,4 @@ if __name__ == '__main__':
     # llm = LLM()
     # generator = ReportGenerator(llm)
     # generator.generate_daily_report("daily_progress/langchain-ai_langchain_2026-04-16.md")
+    # generator.generate_daily_report("daily_progress/langchain-ai_langchain_2026-04-17.md")
