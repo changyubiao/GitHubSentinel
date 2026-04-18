@@ -1,11 +1,16 @@
 import os
 from openai import OpenAI  # 导入OpenAI库用于访问GPT模型
 from logger import LOG  # 导入日志模块
+from dotenv import load_dotenv
 
+load_dotenv()
 class LLM:
     def __init__(self):
         # 创建一个OpenAI客户端实例
-        self.client = OpenAI()
+        self.client = OpenAI(
+            base_url=os.getenv("API_YI_BASE_URL"),  
+            api_key=os.getenv("API_YI_KEY") 
+        )
         # 配置日志文件，当文件大小达到1MB时自动轮转，日志级别为DEBUG
         LOG.add("daily_progress/llm_logs.log", rotation="1 MB", level="DEBUG")
 
