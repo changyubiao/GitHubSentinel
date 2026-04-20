@@ -172,3 +172,9 @@ src/local_main.py
 
 
 helloworld/*
+
+.gradio
+
+
+demo.css
+index.html 
