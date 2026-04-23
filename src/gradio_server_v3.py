@@ -49,6 +49,8 @@ def _repo_dropdown_update(value: str | None = None):
 def add_repo(repo_url, current_df, tracked_repo: str | None):
     no_change_dd = gr.update()
     if not repo_url:
+        gr.Info("请输入 github 仓库地址", duration=3)
+        LOG.warning(f"请输入 github 仓库地址: {repo_url!r}")
         return "", current_df, no_change_dd, tracked_repo
 
     try:
