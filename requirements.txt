@@ -3,3 +3,5 @@ openai
 gradio
 loguru
 python-daemon
+python-dotenv==1.2.2
+dotenv==0.9.9

@@ -1,5 +1,7 @@
 [
     "langchain-ai/langchain",
+    "gradio-app/gradio",
     "DjangoPeng/openai-quickstart",
-    "ollama/ollama"
+    "ollama/ollama",
+    "fastapi/fastapi"
 ]

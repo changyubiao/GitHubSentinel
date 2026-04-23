@@ -58,8 +58,10 @@ class CommandHandler:
 
     # 下面是各种命令对应的方法实现，每个方法都使用了相应的管理器来执行实际操作，并输出结果信息
     def add_subscription(self, args):
-        self.subscription_manager.add_subscription(args.repo)
-        print(f"Added subscription for repository: {args.repo}")
+        if self.subscription_manager.add_subscription(args.repo):
+            print(f"Added subscription for repository: {args.repo}")
+        else:
+            print(f"Skip: repository already subscribed: {args.repo}")
 
     def remove_subscription(self, args):
         self.subscription_manager.remove_subscription(args.repo)

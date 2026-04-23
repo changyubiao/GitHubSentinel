@@ -1,0 +1,32 @@
+[
+    {
+        "repo_name": "langchain-ai/langchain",
+        "subscribe_time": "2023-10-01T00:00:00.000Z",
+        "status": "正常"
+    },
+    {
+        "repo_name": "DjangoPeng/openai-quickstart",
+        "subscribe_time": "2023-11-12T00:00:00.000Z",
+        "status": "正常"
+    },
+    {
+        "repo_name": "ollama/ollama",
+        "subscribe_time": "2026-04-23 14:56:04",
+        "status": "正常"
+    },
+    {
+        "repo_name": "changyubiao/everyday",
+        "subscribe_time": "2026-04-23 18:07:16",
+        "status": "正常"
+    },
+    {
+        "repo_name": "ollama/ollama",
+        "subscribe_time": "2026-04-23 18:08:11",
+        "status": "正常"
+    },
+    {
+        "repo_name": "changyubiao/everyday",
+        "subscribe_time": "2026-04-23 18:08:28",
+        "status": "正常"
+    }
+]

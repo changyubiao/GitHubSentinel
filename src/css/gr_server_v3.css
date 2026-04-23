@@ -1,0 +1,25 @@
+/* 
+#main-title {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 20px;
+} */
+
+/* 让标题居中 */
+#main-title span>h1 {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 48px;
+    display: block;
+}
+
+
+
+
+#left-column {
+    padding-right: 10px;
+}
+
+#right-column {
+    padding-left: 10px;
+}
