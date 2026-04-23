@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timezone,timedelta
 
 from logger import LOG
 
@@ -40,7 +40,6 @@ class SubscriptionManager:
         Returns:
             _type_: _description_
         """
-        # # 默认 order 为 1000，确保没有 order 的排在后面])
         return [sub['repo_name'] for sub in self.subscriptions]
     
     def add_subscription(self, repo) -> bool:
@@ -49,9 +48,15 @@ class SubscriptionManager:
             name = repo.strip()
             if not name:
                 return False
+            
+            # 重复性检查
+            if name in self.list_subscription_repos():
+                LOG.warning(f"仓库「{name}」已在订阅列表中，无需重复添加。")
+                return False
+            
             item = {
                 "repo_name": name,
-                "subscribe_time": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S"),
+                "subscribe_time": datetime.now(tz=timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S"),
                 "status": "正常",
             }
         elif isinstance(repo, dict) and repo.get("repo_name"):

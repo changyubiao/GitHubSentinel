@@ -1,7 +1,6 @@
-# import datetime
+
 from datetime import datetime, timezone, timedelta
 
-# import datetime 
 import os
 import tempfile
 import shutil
@@ -53,30 +52,33 @@ def add_repo(repo_url, current_df, tracked_repo: str | None):
         return "", current_df, no_change_dd, tracked_repo
 
     try:
-        # 检查仓库是否存在
-        if not github_client.check_repo_exists(repo=repo_url):
-            LOG.error(f"仓库不存在: {repo_url}")
-            gr.Warning(f"仓库不存在: {repo_url}", duration=5)
-            # raise  gr.Error(f"仓库不存在: {repo_url}")
-            return repo_url, current_df, no_change_dd, tracked_repo
-
         # 提取仓库名称
         repo_name = github_client.get_repo_name(repo_url)
+        # 重复性检查
+        if not subscription_manager.add_subscription(repo_name):
+            gr.Warning(f"仓库「{repo_name}」已在订阅列表中，无需重复添加。", duration=8)
+            return "", current_df, no_change_dd, tracked_repo
+        
+        # repo 存在性检测
+        if not github_client.check_repo_exists(repo=repo_url):
+            LOG.error(f"仓库不存在: {repo_url}")
+            gr.Warning(f"仓库不存在: {repo_url}", duration=8)
+            return "", current_df, no_change_dd, tracked_repo
+
+
         new_data = {
             "repo_name": repo_name,
             "subscribe_time": datetime.now(tz=shanghai_tz).strftime("%Y-%m-%d %H:%M:%S"),
             "status": "正常",
         }
 
-        if not subscription_manager.add_subscription(new_data):
-            gr.Warning(f"仓库「{repo_name}」已在订阅列表中，无需重复添加。", duration=5)
-            return "", current_df, no_change_dd, tracked_repo
-        LOG.debug(f"Subscription added to file: {new_data},")
+
     except gr.Error as e:
         LOG.error(f"Failed to save subscription to file: {e}, repo_url: {repo_url}")
         raise e  # 将错误抛出到前端显示
     except Exception as e:
         LOG.error(f"Unexpected error: {e}, repo_url: {repo_url}")
+        gr.Warning(f"Unexpected error: {e}, repo_url: {repo_url}", duration=8)
         return "", current_df, no_change_dd, tracked_repo
 
     # 拼接 DataFrame
@@ -86,6 +88,8 @@ def add_repo(repo_url, current_df, tracked_repo: str | None):
         new_df = pd.concat([current_df, pd.DataFrame([new_data])], ignore_index=True)
 
     dd_upd, new_val = _repo_dropdown_update(value=repo_name)
+    
+    LOG.debug(f"Subscription added to file: {new_data} ")
     return "", new_df, dd_upd, new_val
 
 
@@ -149,24 +153,6 @@ def clear_form():
     return default_value, 3, "# XXXXX 项目进展\n\n请选择项目并生成报告", None, default_value
 
 
-def format_display(df: pd.DataFrame):
-    """ 
-    @deprecated
-    转成 中文 方便展示 废弃
-    
-    """
-    # Check if columns are already in Chinese or English to avoid errors
-    if "repo_name" in df.columns:
-        df.rename(columns={
-            "repo_name": "仓库名称",
-            "subscribe_time": "订阅时间",
-            "status": "状态"
-        }, inplace=True)
-    
-    if "order" in df.columns:
-        df.drop(columns=["order"], inplace=True)
-    return df 
-
 def  init_dataframe():
     # 这里可以从 subscription_manager 加载实际数据
     # 例如：subscription_manager.list_subscriptions() 返回一个列表，
@@ -223,7 +209,9 @@ with gr.Blocks(title="GitHubSentinel") as demo:
                 
 
         # 绑定事件
-        btn_submit.click(fn=generate_report, inputs=[repo_dropdown, period_slider], outputs=[report_markdown, report_file])
+        btn_submit.click(fn=generate_report, 
+                         inputs=[repo_dropdown, period_slider], 
+                         outputs=[report_markdown, report_file])
 
         btn_clear.click(
             fn=clear_form,
@@ -262,7 +250,6 @@ with gr.Blocks(title="GitHubSentinel") as demo:
                 del_btn = gr.Button("删除选中项", variant="stop")
 
             # ================= 事件绑定 =================
-            
             # 1. 添加事件（同步更新「项目进展」里的订阅下拉框 + 选中镜像 State）
             add_btn.click(
                 fn=add_repo,
@@ -278,7 +265,7 @@ with gr.Blocks(title="GitHubSentinel") as demo:
                     return None
                 
                 row_index = evt.index[0]
-                LOG.info(f"Row index selected: {row_index}, pre index selected: {pre_selected}")
+                LOG.info(f"Row index selected: {row_index}, pre Row index selected: {pre_selected}")
                 
                 # If clicking the already selected row, optionally deselect it (set to None)
                 # Or just keep it selected. Here we implement: click new row -> select new row.
