@@ -27,7 +27,7 @@ stop() {
         PID=$(cat $PID_FILE)
         echo "Stopping $DAEMON_NAME..."
         # 使用 kill 命令停止进程
-        kill $PID
+        kill "$PID"
         echo "$DAEMON_NAME stopped."
         # 删除 PID 文件
         rm $PID_FILE
@@ -41,7 +41,7 @@ status() {
     if [ -f $PID_FILE ]; then
         PID=$(cat $PID_FILE)
         # 检查进程是否在运行
-        if ps -p $PID > /dev/null
+        if ps -p "$PID" > /dev/null
         then
            echo "$DAEMON_NAME is running."
         else

@@ -1,7 +1,11 @@
 import gradio as gr  # 导入gradio库用于创建GUI
+from dotenv import load_dotenv  # 导入dotenv库用于加载环境变量
+# 先 加载环境变量，以确保在导入其他模块时可以使用这些环境变量
+load_dotenv()  # 加载环境变量
 
 from config import Config  # 导入配置管理模块
-from github_client import GitHubClient  # 导入用于GitHub API操作的客户端
+# from github_client import GitHubClient  # 导入用于GitHub API操作的客户端
+from github_client_v2 import GitHubClient  # 导入GitHub客户端的另一个版本
 from report_generator import ReportGenerator  # 导入报告生成器模块
 from llm import LLM  # 导入可能用于处理语言模型的LLM类
 from subscription_manager import SubscriptionManager  # 导入订阅管理器
@@ -10,7 +14,11 @@ from logger import LOG  # 导入日志记录器
 # 创建各个组件的实例
 config = Config()
 github_client = GitHubClient(config.github_token)
-llm = LLM()
+
+# llm = LLM()
+# 使用火山引擎 大模型
+llm= LLM(factory_name="ark",model_name="doubao-seed-2-0-lite-260215")
+
 report_generator = ReportGenerator(llm)
 subscription_manager = SubscriptionManager(config.subscriptions_file)
 
@@ -29,13 +37,15 @@ demo = gr.Interface(
         gr.Dropdown(
             subscription_manager.list_subscriptions(), label="订阅列表", info="已订阅GitHub项目"
         ),  # 下拉菜单选择订阅的GitHub项目
-        gr.Slider(value=2, minimum=1, maximum=7, step=1, label="报告周期", info="生成项目过去一段时间进展，单位：天"),
+        
         # 滑动条选择报告的时间范围
+        gr.Slider(value=2, minimum=1, maximum=30, step=1, label="报告周期", info="生成项目过去一段时间进展，单位：天"),
     ],
     outputs=[gr.Markdown(), gr.File(label="下载报告")],  # 输出格式：Markdown文本和文件下载
 )
 
 if __name__ == "__main__":
-    demo.launch(share=True, server_name="0.0.0.0")  # 启动界面并设置为公共可访问
+    # demo.launch(share=True, server_name="0.0.0.0")  # 启动界面并设置为公共可访问
+    demo.launch(share=False, debug=True)  # 本地调试
     # 可选带有用户认证的启动方式
-    # demo.launch(share=True, server_name="0.0.0.0", auth=("django", "1234"))
+    # demo.launch(share=False,debug=True, server_name="0.0.0.0", auth=("admin", "000000"))

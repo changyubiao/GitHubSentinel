@@ -166,3 +166,14 @@ daily_progress/*
 src/jupyter/*.md
 src/jupyter/daily_progress/*
 run/*
+
+
+
+
+# frank local files
+src/local_main.py
+helloworld/*
+.gradio
+demo.css
+index.html 
+.idea/

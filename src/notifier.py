@@ -51,7 +51,7 @@ if __name__ == '__main__':
     #     'smtp_server': 'smtp.qiye.aliyun.com',
     #     'smtp_port': 465,
     #     'from': 'changyubiao@zhihe.com',
-    #     'password': '9tSXJS04tCWggyti',
+    #     'password': 'xxxxxxxx',
     #     'to': 'changyubiao@zhihe.com'
     # }
     notifier = Notifier(email_settings=config.email)

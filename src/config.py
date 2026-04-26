@@ -2,12 +2,16 @@ import json
 import os
 
 class Config:
-    def __init__(self):
+    def __init__(self,version:str="v1.0"):
+        self.version = version
+        
         self.load_config()
-    
+
+
     def load_config(self):
-        # 尝试从环境变量获取配置或使用 config.json 文件中的配置作为回退
-        with open('config.json', 'r') as f:
+        
+        config_file = self.map_version_config_file_name(self.version)  
+        with open(config_file, 'r') as f:
             config = json.load(f)
             
             # 使用环境变量或配置文件的 GitHub Token
