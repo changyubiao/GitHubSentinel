@@ -83,3 +83,22 @@ class ReportGenerator:
         return self.generate_daily_report(markdown_file_path)
         
 
+    def generate_hacknews_report(self, hacknews_markdown_file_path:str) -> tuple[str, str]:
+        """生成HackerNews热点报告
+
+        Args:
+            hacknews_content_markdown_file_path (str): HackerNews热点数据, markdown 格式文件路径
+
+        Returns:
+            str: 生成的报告
+        """
+        with open(hacknews_markdown_file_path, 'r') as file:
+            hacknews_content_markdown = file.read()
+            
+        report =  self.llm.generate_hacknews_report(hacknews_content_markdown)
+        
+        report_file_path = os.path.splitext(hacknews_markdown_file_path)[0] + "_report.md"
+        with open(report_file_path, 'w+') as report_file:
+            report_file.write(report)
+        LOG.info(f"Generated hacknews report saved to {report_file_path!r}")
+        return report, report_file_path

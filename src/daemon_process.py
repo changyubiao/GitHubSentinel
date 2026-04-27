@@ -42,7 +42,7 @@ def main():
     subscription_manager = SubscriptionManager(config.subscriptions_file)  # 创建订阅管理器实例
 
     # 启动时立即执行（如不需要可注释）
-    github_job(subscription_manager, github_client, report_generator, notifier, config.freq_days)
+    # github_job(subscription_manager, github_client, report_generator, notifier, config.freq_days)
 
     # 安排每天的定时任务
     schedule.every(config.freq_days).days.at(

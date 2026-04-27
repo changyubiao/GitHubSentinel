@@ -1,3 +1,7 @@
+"""交互式 CLI：子命令在 command_handler.CommandHandler 中注册。
+
+含 hacknews-report：抓取 HackerNews 中文版热点并写入 daily_progress/hacknews/，再生成 *_report.md。
+"""
 import shlex  # 导入shlex库，用于正确解析命令行输入
 from dotenv import load_dotenv
 
@@ -5,9 +9,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from config import Config  # 从config模块导入Config类，用于配置管理
-# from github_client import GitHubClient  # 从github_client模块导入GitHubClient类，用于GitHub API操作
 from github_client_v2 import GitHubClient  
-# from notifier import Notifier  # 从notifier模块导入Notifier类，用于通知功能
+from hacknews_client import HackerNewsClient
+
+from notifier import Notifier  # 从notifier模块导入Notifier类，用于通知功能
 from report_generator import ReportGenerator  # 从report_generator模块导入ReportGenerator类，用于报告生成
 from llm import LLM  # 从llm模块导入LLM类，可能用于语言模型相关操作
 from subscription_manager import SubscriptionManager  # 从subscription_manager模块导入SubscriptionManager类，管理订阅
@@ -15,18 +20,18 @@ from command_handler import CommandHandler  # 从command_handler模块导入Comm
 from logger import LOG  # 从logger模块导入LOG对象，用于日志记录
 
 
-
 def main():
-    config = Config()  # 创建配置实例
+    config = Config(version="v3.0")  # 创建配置实例
     github_client = GitHubClient(config.github_token)  # 创建GitHub客户端实例
-    # notifier = Notifier(config.notification_settings)  # 创建通知器实例
-    # llm = LLM()  # 创建语言模型实例
+    hn_client = HackerNewsClient()  # 创建HackerNews客户端实例
+
+    notifier = Notifier(config.email)  # 创建通知器实例
     
     llm = LLM(factory_name="ark",model_name="deepseek-v3-2-251201")
 
     report_generator = ReportGenerator(llm)  # 创建报告生成器实例
     subscription_manager = SubscriptionManager(config.subscriptions_file)  # 创建订阅管理器实例
-    command_handler = CommandHandler(github_client, subscription_manager, report_generator)  # 创建命令处理器实例
+    command_handler = CommandHandler(github_client, subscription_manager, report_generator, hn_client)  # 创建命令处理器实例
     
     parser = command_handler.parser  # 获取命令解析器
     command_handler.print_help()  # 打印帮助信息

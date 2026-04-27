@@ -3,7 +3,8 @@ openai
 gradio
 loguru
 schedule
-markdown2
+markdown2==2.5.5
 python-daemon
 python-dotenv==1.2.2
 dotenv==0.9.9
+beautifulsoup4==4.14.3

@@ -1,15 +1,18 @@
 # src/command_handler.py
 
-import argparse
-
 import argparse  # 导入argparse库，用于处理命令行参数解析
 
+from hacknews_client import HackerNewsClient
+from logger import LOG
+
+
 class CommandHandler:
-    def __init__(self, github_client, subscription_manager, report_generator):
+    def __init__(self, github_client, subscription_manager, report_generator, hn_client:HackerNewsClient):
         # 初始化CommandHandler，接收GitHub客户端、订阅管理器和报告生成器
         self.github_client = github_client
         self.subscription_manager = subscription_manager
         self.report_generator = report_generator
+        self.hn_client = hn_client
         self.parser = self.create_parser()  # 创建命令行解析器
 
     def create_parser(self):
@@ -50,10 +53,23 @@ class CommandHandler:
         parser_generate.add_argument('file', type=str, help='The markdown file to generate report from')
         parser_generate.set_defaults(func=self.generate_daily_report)
 
+        # 抓取 HackerNews 中文版热点并写入
+        parser_hacknews_export = subparsers.add_parser(
+            'hacknews-export',
+            help='Fetch HackerNews (hn.aimaker.dev) hot list and export to daily_progress/hacknews/',
+        )
+        parser_hacknews_export.set_defaults(func=self.export_hacknews)
+
+
+        parser_hacknews_report = subparsers.add_parser(
+            'generate-hacknews-report',
+            help='Generate report from HackerNews hot list markdown file',
+        )
+        parser_hacknews_report.add_argument('file',type=str,help='The markdown file to generate report from')
+        parser_hacknews_report.set_defaults(func=self.generate_hacknews_report)
         # 帮助命令
         parser_help = subparsers.add_parser('help', help='Show help message')
         parser_help.set_defaults(func=self.print_help)
-
         return parser  # 返回配置好的解析器
 
     # 下面是各种命令对应的方法实现，每个方法都使用了相应的管理器来执行实际操作，并输出结果信息
@@ -84,6 +100,19 @@ class CommandHandler:
     def generate_daily_report(self, args):
         self.report_generator.generate_daily_report(args.file)
         print(f"Generated daily report from file: {args.file}")
+
+
+    def export_hacknews(self, args):
+        file_path = self.hn_client.export_hot_news()
+        print(f"Exported HackerNews hot list to {file_path}")
+
+    def generate_hacknews_report(self, args):
+        try:
+            _, report_path = self.report_generator.generate_hacknews_report(args.file)
+            print(f"HackerNews 报告已生成: {report_path}")
+        except Exception as e:
+            LOG.exception("hacknews-report failed")
+            print(f"HackerNews 报告生成失败: {e}")
 
     def print_help(self, args=None):
         self.parser.print_help()  # 输出帮助信息

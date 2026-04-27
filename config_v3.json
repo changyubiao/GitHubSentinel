@@ -4,6 +4,15 @@
         "email": "your_email@example.com",
         "slack_webhook_url": "your_slack_webhook_url"
     },
+
+    "email":  {
+        "smtp_server": "smtp.qiye.aliyun.com",
+        "smtp_port": 465,
+        "from": "changyubiao@zhihe.com",
+        "password": "",
+        "to": "changyubiao@zhihe.com"
+    },
+    
     "subscriptions_file": "subscriptions_v3.json",
     "update_interval": 86400
 }
