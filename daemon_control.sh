@@ -56,7 +56,7 @@ status() {
         # 检查进程是否在运行
         if ps -p "$PID" > /dev/null
         then
-           echo "$DAEMON_NAME is running."
+           echo "$DAEMON_NAME is running, PID: $PID"
         else
            echo "$DAEMON_NAME is not running."
         fi
