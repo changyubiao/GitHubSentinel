@@ -1,36 +1,49 @@
 #!/bin/bash
 # 守护进程控制脚本
 
+# 脚本所在目录的绝对路径（本文件所在目录）
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# 可通过环境变量覆盖，例如：BASE_DIR=/var/lib/github-sentinel ./daemon_control.sh start
+BASE_DIR="${BASE_DIR:-$SCRIPT_DIR}"
+
+LOG_DIR="$BASE_DIR/logs"
+RUN_DIR="$BASE_DIR/run"
+
+# 创建日志和运行目录 如果目录不存在则创建
+mkdir -p "$LOG_DIR" "$RUN_DIR"
+
 # 定义守护进程 Python 脚本的路径
-DAEMON_PATH="./src/daemon_process.py"
+DAEMON_PATH="$BASE_DIR/src/daemon_process.py"
 # 定义守护进程的名称
 DAEMON_NAME="DaemonProcess"
 # 定义日志文件的路径
-LOG_FILE="./logs/$DAEMON_NAME.log"
+LOG_FILE="$LOG_DIR/${DAEMON_NAME}.log"
 # 定义守护进程的 PID 文件路径，用于存储进程号
-PID_FILE="./run/$DAEMON_NAME.pid"
+PID_FILE="$RUN_DIR/${DAEMON_NAME}.pid"
+
 
 # 启动守护进程的函数
 start() {
     echo "Starting $DAEMON_NAME..."
     # 使用 nohup 命令在后台运行 Python 脚本，并将输出重定向到日志文件
-    nohup python3 $DAEMON_PATH > $LOG_FILE 2>&1 &
+    nohup python3 "$DAEMON_PATH" > "$LOG_FILE" 2>&1 &
     # 将守护进程的 PID 写入文件
-    echo $! > $PID_FILE
+    echo "$!" > "$PID_FILE"
     echo "$DAEMON_NAME started."
 }
 
 # 停止守护进程的函数
 stop() {
-    if [ -f $PID_FILE ]; then
+    if [ -f "$PID_FILE" ]; then
         # 如果 PID 文件存在，读取 PID
-        PID=$(cat $PID_FILE)
+        PID=$(cat "$PID_FILE")
         echo "Stopping $DAEMON_NAME..."
         # 使用 kill 命令停止进程
         kill "$PID"
         echo "$DAEMON_NAME stopped."
         # 删除 PID 文件
-        rm $PID_FILE
+        rm "$PID_FILE"
     else
         echo "$DAEMON_NAME is not running."
     fi
@@ -38,8 +51,8 @@ stop() {
 
 # 检查守护进程状态的函数
 status() {
-    if [ -f $PID_FILE ]; then
-        PID=$(cat $PID_FILE)
+    if [ -f "$PID_FILE" ]; then
+        PID=$(cat "$PID_FILE")
         # 检查进程是否在运行
         if ps -p "$PID" > /dev/null
         then
