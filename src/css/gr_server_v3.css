@@ -9,11 +9,36 @@
 #main-title span>h1 {
     text-align: center;
     margin-top: 10px;
-    font-size: 48px;
+    font-size: 40px;
     display: block;
 }
 
+#hackernews-tab-title h2 {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 40px;
+    display: block;
+}
 
+/* HackerNews 页说明文案：居中、浅灰 */
+#hackernews-tab-description {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+#hackernews-tab-description p {
+    text-align: center;
+    color: #8b9099;
+    font-size: 14px;
+    line-height: 1.65;
+    margin: 0;
+}
+
+#hackernews-tab-description a {
+    /* color: #7a8494; */
+    text-decoration: underline;
+}
 
 
 #left-column {

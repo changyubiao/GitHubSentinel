@@ -1,0 +1,4 @@
+[tool.black]
+line-length = 150
+# 在这里列出所有你需要支持的 Python 版本
+target-version = ['py311']

@@ -16,7 +16,6 @@ from llm import LLM  # 导入可能用于处理语言模型的LLM类
 from subscription_manager import SubscriptionManager  # 导入订阅管理器
 from logger import LOG  # 导入日志记录器
 
-
 """ 
 使用block 来布局页面 更加灵活一点
 
@@ -44,14 +43,15 @@ def generate_report(repo: str, days: int = 3):
     daily_dir, repo_name, filename = report_file_path.split("/")
 
     full_filename = "_".join([repo_name, filename])
-    
+
     new_full_filename = os.path.join(tempfile.gettempdir(), full_filename)
     # 复制到 temp 目录下，并使用新的文件名
     shutil.copy(report_file_path, new_full_filename)
-    
+
     LOG.info(f"Generated report: {report_file_path}, copy to: {new_full_filename!r}")
 
     return report, new_full_filename
+
 
 def clear_form():
     """清空表单"""
@@ -65,11 +65,11 @@ subscription_manager.list_subscriptions()
 
 # UI 组件创建
 with gr.Blocks(title="GitHubSentinel") as demo:
-    gr.Markdown("# GitHubSentinel",elem_id="main-title")
+    gr.Markdown("# GitHubSentinel", elem_id="main-title")
 
     with gr.Row(equal_height=True):
         # 左侧表单区域
-        with gr.Column(scale=1,elem_id="left-column"):
+        with gr.Column(scale=1, elem_id="left-column"):
             # 订阅列表模块 - 使用 Dropdown 的 label 和 info 参数
             repo_dropdown = gr.Dropdown(
                 choices=subscription_manager.list_subscriptions(),
@@ -86,10 +86,9 @@ with gr.Blocks(title="GitHubSentinel") as demo:
                 btn_submit = gr.Button("生成报告", variant="primary")
 
         # 右侧内容展示区域
-        with gr.Column(scale=2,elem_id="right-column"):
+        with gr.Column(scale=2, elem_id="right-column"):
             report_markdown = gr.Markdown(value="# XXXXX 项目进展\n\n请选择项目并生成报告", elem_id="report-content")
             report_file = gr.File(label="下载报告", file_types=[".md"], height=40)
-            
 
     # 绑定事件
     btn_submit.click(fn=generate_report, inputs=[repo_dropdown, period_slider], outputs=[report_markdown, report_file])
@@ -97,11 +96,5 @@ with gr.Blocks(title="GitHubSentinel") as demo:
     btn_clear.click(fn=clear_form, inputs=None, outputs=[repo_dropdown, period_slider, report_markdown, report_file])
 
 
-
-
 if __name__ == "__main__":
-    demo.launch(
-        debug=True,
-        share=False,
-        css_paths=["src/css/gr_server_v2.css"]
-    )
+    demo.launch(debug=True, share=False, css_paths=["src/css/gr_server_v2.css"])

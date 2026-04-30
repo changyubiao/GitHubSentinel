@@ -2,6 +2,7 @@
 
 含 hacknews-report：抓取 HackerNews 中文版热点并写入 daily_progress/hacknews/，再生成 *_report.md。
 """
+
 import shlex  # 导入shlex库，用于正确解析命令行输入
 from dotenv import load_dotenv
 
@@ -9,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from config import Config  # 从config模块导入Config类，用于配置管理
-from github_client_v2 import GitHubClient  
+from github_client_v2 import GitHubClient
 from hacknews_client import HackerNewsClient
 
 from notifier import Notifier  # 从notifier模块导入Notifier类，用于通知功能
@@ -26,20 +27,20 @@ def main():
     hn_client = HackerNewsClient()  # 创建HackerNews客户端实例
 
     notifier = Notifier(config.email)  # 创建通知器实例
-    
-    llm = LLM(factory_name="ark",model_name="deepseek-v3-2-251201")
+
+    llm = LLM(factory_name="ark", model_name="deepseek-v3-2-251201")
 
     report_generator = ReportGenerator(llm)  # 创建报告生成器实例
     subscription_manager = SubscriptionManager(config.subscriptions_file)  # 创建订阅管理器实例
     command_handler = CommandHandler(github_client, subscription_manager, report_generator, hn_client)  # 创建命令处理器实例
-    
+
     parser = command_handler.parser  # 获取命令解析器
     command_handler.print_help()  # 打印帮助信息
 
     while True:
         try:
             user_input = input("GitHub Sentinel> ")  # 等待用户输入
-            if user_input in ['exit', 'quit', 'q']:  # 如果输入为退出命令，则结束循环
+            if user_input in ["exit", "quit", "q"]:  # 如果输入为退出命令，则结束循环
                 break
             try:
                 args = parser.parse_args(shlex.split(user_input))  # 解析用户输入的命令
@@ -51,5 +52,6 @@ def main():
         except Exception as e:
             LOG.error(f"Unexpected error: {e}")  # 记录其他未预期的错误
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()  # 如果直接运行该文件，则执行main函数
